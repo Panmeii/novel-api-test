@@ -75,7 +75,4 @@ async function scrapeLatestRelease(page = 1, status = "", type = "", order = "up
     }
 }
 
-// Contoh pemanggilan fungsi
-scrapeLatestRelease(1).then((novels) => console.log(novels));
-
 module.exports = { scrapeLatestRelease };
