@@ -1,7 +1,7 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
 
-const BASE_URL = "https://bacalightnovel.co/";
+const BASE_URL = "https://enuma.id/";
 
 /**
  * Scrape daftar novel terbaru dengan filter query
