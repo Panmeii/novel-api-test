@@ -6,8 +6,8 @@ const BASE_URL = "https://enuma.id/";
 /**
  * Scrape daftar novel terbaru dari enuma.id
  */
-async function scrapeLatestRelease(page = 1) {
-    const url = `${BASE_URL}series/?page=${page}`;
+async function scrapeLatestRelease(page = 1, status = "", type = "", order = "update") {
+    const url = `${BASE_URL}series/?page=${page}&status=${status}&type=${type}&order=${order}`;
     console.log(`Fetching data from: ${url}`);
 
     try {
@@ -23,30 +23,35 @@ async function scrapeLatestRelease(page = 1) {
         const $ = cheerio.load(data);
         const novels = [];
 
-        $(".inmain").each((_, element) => {
-            const mdthumb = $(element).find(".mdthumb a");
-            const mdinfo = $(element).find(".mdinfo");
+        $(".bs").each((_, element) => {
+            const novelElement = $(element);
 
-            const novelUrl = mdthumb.attr("href") || "";
-            const cover = mdthumb.find("img").attr("data-src") || mdthumb.find("img").attr("src") || "";
-            const title = mdinfo.find("h2[itemprop='headline'] a").text().trim();
-            const description = mdinfo.find(".contexcerpt p").text().trim();
+            // Mendapatkan URL novel
+            const novelUrl = novelElement.find(".headline a").attr("href") || "";
 
-            // Mengambil genre dalam bentuk array
+            // Mendapatkan cover novel (gunakan data-src jika ada)
+            const cover = novelElement.find(".mdthumb a img").attr("data-src") || novelElement.find(".bsx img").attr("src") || "";
+
+            // Mendapatkan judul novel
+            const title = novelElement.find(".mdinfo h2").text().trim();
+
+            // Mendapatkan genre (bentuk array)
             const genres = [];
-            mdinfo.find(".mdgenre a").each((_, genre) => {
+            novelElement.find(".mdgenre a").each((_, genre) => {
                 genres.push($(genre).text().trim());
             });
 
-            const rating = mdinfo.find(".mdminf i.fas.fa-star").parent().text().trim();
-            const latestChapter = mdinfo.find(".nchapter a").text().trim();
-            const latestChapterUrl = mdinfo.find(".nchapter a").attr("href") || "";
+            // Mendapatkan rating
+            const rating = novelElement.find(".rating i.fa-star").parent().text().trim();
+
+            // Mendapatkan chapter terbaru
+            const latestChapter = novelElement.find(".eps a").text().trim();
+            const latestChapterUrl = novelElement.find(".eps a").attr("href") || "";
 
             novels.push({
                 title,
                 novelUrl,
                 cover,
-                description,
                 genres,
                 rating,
                 latestChapter,
@@ -65,7 +70,5 @@ async function scrapeLatestRelease(page = 1) {
     }
 }
 
-// Contoh penggunaan
-scrapeLatestRelease(1).then((novels) => console.log(novels));
-
+/
 module.exports = { scrapeLatestRelease };
