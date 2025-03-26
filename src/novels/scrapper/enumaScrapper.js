@@ -4,7 +4,7 @@ const cheerio = require("cheerio");
 const BASE_URL = "https://enuma.id/";
 
 /**
- * Scrape daftar novel terbaru dari enuma.id
+ * Scrape daftar novel terbaru dari Enuma.id
  */
 async function scrapeLatestRelease(page = 1, status = "", type = "", order = "update") {
     const url = `${BASE_URL}series/?page=${page}&status=${status}&type=${type}&order=${order}`;
@@ -23,35 +23,40 @@ async function scrapeLatestRelease(page = 1, status = "", type = "", order = "up
         const $ = cheerio.load(data);
         const novels = [];
 
-        $(".bs").each((_, element) => {
-            const novelElement = $(element);
+        $(".inmain").each((_, element) => {
+            const mdthumb = $(element).find(".mdthumb a");
+            const mdinfo = $(element).find(".mdinfo");
 
-            // Mendapatkan URL novel
-            const novelUrl = novelElement.find(".headline a").attr("href") || "";
+            // Ambil URL novel
+            const novelUrl = mdthumb.attr("href") || "";
 
-            // Mendapatkan cover novel (gunakan data-src jika ada)
-            const cover = novelElement.find(".mdthumb a img").attr("data-src") || novelElement.find(".bsx img").attr("src") || "";
+            // Ambil cover (gunakan data-src karena lazy-load)
+            const cover = mdthumb.find("img").attr("data-src") || mdthumb.find("img").attr("src") || "";
 
-            // Mendapatkan judul novel
-            const title = novelElement.find(".mdinfo h2").text().trim();
+            // Ambil judul novel
+            const title = mdinfo.find("h2[itemprop='headline'] a").text().trim();
 
-            // Mendapatkan genre (bentuk array)
+            // Ambil deskripsi novel
+            const description = mdinfo.find(".contexcerpt p").text().trim();
+
+            // Ambil genre dalam bentuk array
             const genres = [];
-            novelElement.find(".mdgenre a").each((_, genre) => {
+            mdinfo.find(".mdgenre a").each((_, genre) => {
                 genres.push($(genre).text().trim());
             });
 
-            // Mendapatkan rating
-            const rating = novelElement.find(".rating i.fa-star").parent().text().trim();
+            // Ambil rating
+            const rating = mdinfo.find(".mdminf i.fas.fa-star").parent().text().trim();
 
-            // Mendapatkan chapter terbaru
-            const latestChapter = novelElement.find(".eps a").text().trim();
-            const latestChapterUrl = novelElement.find(".eps a").attr("href") || "";
+            // Ambil chapter terbaru
+            const latestChapter = mdinfo.find(".nchapter a").text().trim();
+            const latestChapterUrl = mdinfo.find(".nchapter a").attr("href") || "";
 
             novels.push({
                 title,
                 novelUrl,
                 cover,
+                description,
                 genres,
                 rating,
                 latestChapter,
@@ -60,7 +65,7 @@ async function scrapeLatestRelease(page = 1, status = "", type = "", order = "up
         });
 
         if (novels.length === 0) {
-            console.warn("Warning: No novels found. Check HTML structure.");
+            console.warn("Warning: No novels found. Periksa apakah struktur HTML berubah.");
         }
 
         return novels;
@@ -70,5 +75,7 @@ async function scrapeLatestRelease(page = 1, status = "", type = "", order = "up
     }
 }
 
-/
+// Contoh pemanggilan fungsi
+scrapeLatestRelease(1).then((novels) => console.log(novels));
+
 module.exports = { scrapeLatestRelease };
