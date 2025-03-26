@@ -4,10 +4,10 @@ const cheerio = require("cheerio");
 const BASE_URL = "https://enuma.id/";
 
 /**
- * Scrape daftar novel terbaru dengan filter query
+ * Scrape daftar novel terbaru dari enuma.id
  */
-async function scrapeLatestRelease(page = 1, status = "", type = "", order = "update") {
-    const url = `${BASE_URL}series/?page=${page}&status=${status}&type=${type}&order=${order}`;
+async function scrapeLatestRelease(page = 1) {
+    const url = `${BASE_URL}series/?page=${page}`;
     console.log(`Fetching data from: ${url}`);
 
     try {
@@ -28,7 +28,7 @@ async function scrapeLatestRelease(page = 1, status = "", type = "", order = "up
             const mdinfo = $(element).find(".mdinfo");
 
             const novelUrl = mdthumb.attr("href") || "";
-            const cover = mdthumb.find("img").attr("src") || "";
+            const cover = mdthumb.find("img").attr("data-src") || mdthumb.find("img").attr("src") || "";
             const title = mdinfo.find("h2[itemprop='headline'] a").text().trim();
             const description = mdinfo.find(".contexcerpt p").text().trim();
 
@@ -64,5 +64,8 @@ async function scrapeLatestRelease(page = 1, status = "", type = "", order = "up
         return [];
     }
 }
+
+// Contoh penggunaan
+scrapeLatestRelease(1).then((novels) => console.log(novels));
 
 module.exports = { scrapeLatestRelease };
