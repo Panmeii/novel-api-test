@@ -1,37 +1,50 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
-const BASE_URL = "https://fanstranslations.com/";
+const BASE_URL = "https://bacalightnovel.co/";
 
-function scrapeData(data){
-  const $ = cheerio.load(data);
-  const novels = [];
-  
-  $(".page-listing-item  .badge-pos-1").each((i, element) => {
-    const pageItemDetail = $(element).find(".page-item-detail");
-    const id = pageItemDetail.find(".item-thumb a").first().attr("href").split(BASE_URL).pop();
-    const cover = pageItemDetail.find(".item-thumb img").attr("src") || "";
-    const itemDetails = $(element).find(".item-summary");
-    const title = itemDetails.find(".post-title h3").text().trim() || "";
-    const rating = $(element).find(".meta-item .post-total-rating span.score").text().trim() || "";
-    const chapterCon = $(element).find(".list-chapter");
-    const chapterList = [];
-    chapterCon.find(".chapter-item").each((i, elem) => {
-      const latestChapter = $(elem).find(".chapter a").text().trim() || "";
-      const chapterId = $(elem).find(".chapter a").attr("href").split(BASE_URL).pop() || "";
-      const uploadedTime = $(elem).find(".post-on").text().trim() || "";
-      chapterList.push({ chapterId, latestChapter, uploadedTime, });
-    });
-    
-    novels.push({ id, cover, title, rating, chapterList, });
-  });
-  return novels;
-}
 
 async function scrapeLatestRelease(page){
-  const url = `${BASE_URL}page/${page}/`;
-  const { data } = await axios.get(url);
-  return scrapeData(data);
+  const url = `${BASE_URL}series/?page=${page}&status=&type=&order=update`;
+  const $ = cheerio.load(data);
+  const novel = [];
+
+  $(".inmain").each((i, element) => {
+            const mdthumb = $(element).find(".mdthumb a");
+            const mdinfo = $(element).find(".mdinfo");
+
+            // Mengambil URL dan Cover
+            const novelUrl = mdthumb.attr("href") || "";
+            const cover = mdthumb.find("img").attr("src") || "";
+
+            // Mengambil Judul dan Deskripsi
+            const title = mdinfo.find("h2[itemprop='headline'] a").text().trim();
+            const description = mdinfo.find(".contexcerpt p").text().trim();
+
+            // Mengambil Genre
+            const genres = [];
+            mdinfo.find(".mdgenre a").each((_, genre) => {
+                genres.push($(genre).text().trim());
+            });
+    // Mengambil Rating
+            const rating = mdinfo.find(".mdminf i.fas.fa-star").parent().text().trim();
+
+            // Mengambil Chapter Terbaru
+            const latestChapter = mdinfo.find(".nchapter a").text().trim();
+            const latestChapterUrl = mdinfo.find(".nchapter a").attr("href") || "";
+
+            // Menyusun data ke dalam array
+            novels.push({
+                title,
+                novelUrl,
+                cover,
+                description,
+                genres,
+                rating,
+                latestChapter,
+                latestChapterUrl,
+            });
 }
+
 async function scrapeFinishedNovels(page){
   const url = `${BASE_URL}novel-tag/finished/page/${page}/`;
   const { data } = await axios.get(url);
