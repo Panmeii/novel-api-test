@@ -11,7 +11,15 @@ async function scrapeLatestRelease(page = 1, status = "", type = "", order = "up
     console.log(`Fetching data from: ${url}`);
 
     try {
-        const { data } = await axios.get(url);
+        // Gunakan headers agar request terlihat seperti browser
+        const { data } = await axios.get(url, {
+            headers: {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                "Accept-Language": "en-US,en;q=0.9",
+                "Referer": BASE_URL,
+            },
+        });
+
         const $ = cheerio.load(data);
         const novels = [];
 
@@ -45,6 +53,10 @@ async function scrapeLatestRelease(page = 1, status = "", type = "", order = "up
                 latestChapterUrl,
             });
         });
+
+        if (novels.length === 0) {
+            console.warn("Warning: No novels found. Check HTML structure.");
+        }
 
         return novels;
     } catch (error) {
