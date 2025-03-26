@@ -1,6 +1,6 @@
 const express = require("express");
 const esnovelRoutes = require("../src/novels/routes/esnovelsRoutes");
-const bacalightRoutes = require("../src/novels/routes/bacalightRoutes");
+const enumaRoutes = require("../src/novels/routes/enumaRoutes");
 
 const app = express();
 const port = 5000;
@@ -12,7 +12,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/esnovel", esnovelRoutes);
-app.use("/novel", bacalightRoutes);
+app.use("/novel", enumaRoutes);
 
 // Start server
 module.exports = app;
