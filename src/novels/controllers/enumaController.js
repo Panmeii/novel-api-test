@@ -1,4 +1,4 @@
-const { scrapeLatestRelease } = require("../scrapper/bacalightScrapper");
+const { scrapeLatestRelease } = require("../scrapper/enumaScrapper");
 
 async function getLatestNovels(req, res) {
     try {
@@ -23,14 +23,14 @@ async function getLatestNovels(req, res) {
 
         return res.status(200).json({
             success: true,
-            source: "https://bacalightnovel.co/",
+            source: "https://enuma.id/",
             total: novels.length,
             page,
             perPage,
             data: paginatedNovels
         });
     } catch (error) {
-        console.error("Failed to fetch data from Bacalightnovel:", error);
+        console.error("Failed to fetch data from Enuma:", error);
         return res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 }
