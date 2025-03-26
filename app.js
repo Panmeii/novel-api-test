@@ -1,7 +1,7 @@
 const express = require("express");
 const esnovelRoutes = require("./src/novels/routes/esnovelsRoutes");
 const fanTranslationRoutes = require("./src/novels/routes/fantranslationRoute");
-const bacalightRoutes = require("./src/novels/routes/bacalightRoute");
+const bacalightRoutes = require("./src/novels/routes/bacalightRoutes");
 
 const app = express();
 const port = 5000;
