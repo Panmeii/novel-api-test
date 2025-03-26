@@ -12,7 +12,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/esnovel", esnovelRoutes);
-app.use("/bacalight", bacalightRoutes);
+app.use("/novel", bacalightRoutes);
 
 // Start server
 module.exports = app;
