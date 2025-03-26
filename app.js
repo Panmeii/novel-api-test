@@ -14,7 +14,7 @@ app.get("/", (req, res) => {
 
 app.use("/esnovel", esnovelRoutes);
 app.use("/novel", fanTranslationRoutes);
-app.use("/enuma", enumaRoutes);
+app.use("/novel", enumaRoutes);
 
 
 // Start server
