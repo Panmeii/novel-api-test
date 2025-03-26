@@ -1,0 +1,28 @@
+{
+  "name": "jellee-api",
+  "version": "1.0.0",
+  "description": "Welcome to Jellee Api - your destination for scrapping data from various novel & manga sites! Seamlessly access  id, title, image and more.",
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JelLee11/Jellee-Api.git"
+  },
+  "bugs": {
+    "url": "https://github.com/JelLee11/Jellee-Api/issues"
+  },
+  "homepage": "https://github.com/JelLee11/Jellee-Api#readme",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon app.js"
+  },
+  "keywords": [],
+  "author": "Jellee",
+  "license": "ISC",
+  "dependencies": {
+    "aniwatch": "^2.4.1",
+    "axios": "^1.7.7",
+    "cheerio": "^1.0.0",
+    "express": "^4.21.1"
+  },
+  "devDependencies": {}
+}
